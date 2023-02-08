@@ -1077,7 +1077,7 @@ if(MBGL_WITH_PLATFORM_EXTRAS)
     include(${MBGL_WITH_PLATFORM_EXTRAS})
 endif()
 
-if(MBGL_WITH_CORE_ONLY)
+if(MBGL_WITH_CORE_ONLY AND NOT MBGL_WITH_QT)
     return()
 endif()
 
@@ -1099,6 +1099,10 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL Darwin)
     include(${PROJECT_SOURCE_DIR}/platform/macos/macos.cmake)
 else()
     message(FATAL_ERROR "Unsupported target platform: " ${CMAKE_SYSTEM_NAME})
+endif()
+
+if(MBGL_WITH_CORE_ONLY)
+    return()
 endif()
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/test)
