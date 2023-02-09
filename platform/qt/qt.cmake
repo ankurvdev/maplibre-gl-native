@@ -11,7 +11,7 @@ option(MBGL_QT_INSIDE_PLUGIN "Build QMapLibreGL as OBJECT library, so it can be 
 option(MBGL_QT_WITH_HEADLESS "Build MapLibre GL Qt with headless support" ON)
 option(MBGL_QT_WITH_INTERNAL_SQLITE "Build MapLibre GL Qt bindings with internal sqlite" OFF)
 option(MBGL_QT_DEPLOYMENT "Autogenerate files necessary for deployment" OFF)
-
+find_package(ZLIB REQUIRED)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR}
              COMPONENTS Gui
@@ -148,6 +148,7 @@ target_link_libraries(
         $<IF:$<BOOL:${MBGL_QT_WITH_INTERNAL_SQLITE}>,mbgl-vendor-sqlite,Qt${QT_VERSION_MAJOR}::Sql>
         $<$<PLATFORM_ID:Linux>:$<IF:$<BOOL:${MBGL_QT_WITH_INTERNAL_ICU}>,mbgl-vendor-icu,ICU::uc>>
         mbgl-vendor-nunicode
+        ZLIB::ZLIB
 )
 
 set(qmaplibregl_headers
@@ -286,7 +287,9 @@ target_link_libraries(
         $<BUILD_INTERFACE:mbgl-vendor-parsedate>
         $<BUILD_INTERFACE:mbgl-vendor-nunicode>
         $<BUILD_INTERFACE:mbgl-vendor-csscolorparser>
+        ZLIB::ZLIB
 )
+
 # Do not use generator expressions for cleaner output
 if (MBGL_QT_STATIC AND NOT MBGL_QT_INSIDE_PLUGIN)
     target_link_libraries(
@@ -294,6 +297,7 @@ if (MBGL_QT_STATIC AND NOT MBGL_QT_INSIDE_PLUGIN)
         PUBLIC
             $<$<NOT:$<BOOL:${MBGL_QT_WITH_INTERNAL_SQLITE}>>:Qt${QT_VERSION_MAJOR}::Sql>
             $<$<NOT:$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:Emscripten>>>:z>
+            ZLIB::ZLIB
     )
 endif()
 
