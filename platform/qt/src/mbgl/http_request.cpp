@@ -51,7 +51,7 @@ QNetworkRequest HTTPRequest::networkRequest() const
             .arg(version::revision)
             .arg(QT_VERSION_STR)
             .toLatin1();
-    req.setRawHeader("User-Agent", agent);
+    //req.setRawHeader("User-Agent", agent);
 
     if (m_resource.priorEtag) {
         const auto etag = m_resource.priorEtag;
