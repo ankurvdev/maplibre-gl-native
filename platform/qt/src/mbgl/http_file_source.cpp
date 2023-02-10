@@ -8,6 +8,7 @@
 #include <QNetworkProxyFactory>
 #include <QNetworkReply>
 #include <QSslConfiguration>
+#include <QSslCertificate>
 
 namespace mbgl {
 
@@ -17,10 +18,15 @@ HTTPFileSource::Impl::Impl(const ResourceOptions& resourceOptions, const ClientO
       m_clientOptions(clientOptions.clone())
 {
     QNetworkProxyFactory::setUseSystemConfiguration(true);
+    QSslCertificate sslcert; // Only there to make sure we dont run into hangs
+    //https://bugreports.qt.io/browse/QTBUG-111084
 }
 
 void HTTPFileSource::Impl::request(HTTPRequest* req)
 {
+    QSslCertificate sslcert; // Only there to make sure we dont run into hangs
+    //https://bugreports.qt.io/browse/QTBUG-111084
+
     QUrl url = req->requestUrl();
 
     QPair<QPointer<QNetworkReply>, QVector<HTTPRequest*>>& data = m_pending[url];
