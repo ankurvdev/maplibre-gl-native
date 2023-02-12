@@ -7,6 +7,9 @@
 #include <cassert>
 #include <functional>
 #include <utility>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 namespace mbgl {
 namespace util {
@@ -56,6 +59,14 @@ void RunLoop::wake() {
     impl->async->send();
 }
 
+#ifdef __EMSCRIPTEN__
+static void RunQEventLoop(void* ptr)
+{
+    QEventLoop* runloop = reinterpret_cast<QEventLoop*>(ptr);
+    runloop->processEvents(QEventLoop::AllEvents, 100);
+}
+#endif
+
 void RunLoop::run() {
     assert(QCoreApplication::instance());
     MBGL_VERIFY_THREAD(tid);
@@ -63,7 +74,11 @@ void RunLoop::run() {
     if (impl->type == Type::Default) {
         QCoreApplication::instance()->exec();
     } else {
+#ifdef __EMSCRIPTEN__
+        emscripten_set_main_loop_arg(RunQEventLoop, impl->loop.get(), 0, 1);
+#else
         impl->loop->exec();
+#endif
     }
 }
 

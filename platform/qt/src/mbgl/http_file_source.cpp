@@ -7,8 +7,8 @@
 #include <QDir>
 #include <QNetworkProxyFactory>
 #include <QNetworkReply>
-#include <QSslConfiguration>
 #include <QSslCertificate>
+#include <QSslConfiguration>
 
 namespace mbgl {
 
@@ -85,7 +85,7 @@ void HTTPFileSource::Impl::cancel(HTTPRequest* req)
 void HTTPFileSource::Impl::onReplyFinished()
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply *>(sender());
-    const QUrl& url = reply->request().url();
+    const QUrl& url = reply->url();
 
     auto it = m_pending.find(url);
     if (it == m_pending.end()) {
